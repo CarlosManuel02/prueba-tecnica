@@ -40,8 +40,8 @@ describe('CreateExchangeDto', () => {
     const dto = new CreateExchangeDto();
     dto.exchange = {
       sourceCurrency: 'USD',
-      targetCurrency: '', // missing value
-      amount: null as any, // invalid value
+      targetCurrency: '', //  empty targetCurrency
+      amount: null as any, // null amount
     };
     const errors = await validate(dto);
     expect(errors.length).toBeGreaterThan(0);
@@ -51,7 +51,7 @@ describe('CreateExchangeDto', () => {
     const dto = new CreateExchangeDto();
     dto.sourceCurrency = 'USD';
     dto.targetCurrency = 'EUR';
-    dto.amount = 'abc' as any;
+    dto.amount = 'abc' as any; // invalid amount
     const errors = await validate(dto);
     expect(errors.length).toBeGreaterThan(0);
   });

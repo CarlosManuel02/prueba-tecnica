@@ -7,9 +7,42 @@ import { Builder, parseStringPromise } from 'xml2js';
 export class ExchangeService {
   constructor() {}
 
+  private readonly exchangeRates: Record<string, Record<string, number>> = {
+    USD: { USD: 1, EUR: 0.91, GBP: 0.78, DOP: 59.0, MXN: 17.0, CAD: 1.35 },
+    EUR: { USD: 1.1, EUR: 1, GBP: 0.86, DOP: 64.8, MXN: 18.7, CAD: 1.48 },
+    GBP: { USD: 1.28, EUR: 1.16, GBP: 1, DOP: 75.5, MXN: 21.5, CAD: 1.72 },
+    DOP: {
+      USD: 0.017,
+      EUR: 0.0154,
+      GBP: 0.0132,
+      DOP: 1,
+      MXN: 0.29,
+      CAD: 0.023,
+    },
+    MXN: { USD: 0.059, EUR: 0.053, GBP: 0.046, DOP: 3.4, MXN: 1, CAD: 0.079 },
+    CAD: { USD: 0.74, EUR: 0.67, GBP: 0.58, DOP: 43.5, MXN: 12.6, CAD: 1 },
+  };
+
+  private getRate(from: string, to: string): number {
+    const fromUpper = from.toUpperCase();
+    const toUpper = to.toUpperCase();
+    // Check if both currencies are the same
+    const fromRates = this.exchangeRates[fromUpper];
+    if (!fromRates) {
+      throw new Error(`Unsupported source currency: ${from}`);
+    }
+    // If the source and target currencies are the same, throw an error
+    const rate = fromRates[toUpper];
+    if (rate === undefined) {
+      throw new Error(`Unsupported currency conversion from ${from} to ${to}`);
+    }
+
+    return rate;
+  }
+
   async getFromApi1(dto: CreateExchangeDto) {
-    const rate = 0.9;
-    const { amount } = dto;
+    const { amount, sourceCurrency, targetCurrency } = dto;
+    const rate = this.getRate(sourceCurrency, targetCurrency);
 
     try {
       const result = amount * rate;
@@ -23,10 +56,11 @@ export class ExchangeService {
   }
 
   async getFromApi2(dto: CreateExchangeDto) {
-    const rate = 0.9;
+    const { amount, sourceCurrency, targetCurrency } = dto.exchange;
+    const rate = this.getRate(sourceCurrency, targetCurrency);
 
     try {
-      const xmlResponse = `<Result>${dto.exchange.amount * rate}</Result>`;
+      const xmlResponse = `<Result>${amount * rate}</Result>`;
       const result = await parseStringPromise(xmlResponse);
       return {
         converted: parseFloat(result.Result),
@@ -41,9 +75,10 @@ export class ExchangeService {
   }
 
   async getFromApi3(dto: CreateExchangeDto) {
-    const rate = 0.9;
+    const { amount, sourceCurrency, targetCurrency } = dto.exchange;
+    const rate = this.getRate(sourceCurrency, targetCurrency);
     try {
-      const total = dto.exchange.amount * rate;
+      const total = amount * rate;
 
       return {
         statusCode: 200,
