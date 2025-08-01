@@ -8,9 +8,11 @@ export class ExchangeService {
   constructor() {}
 
   async getFromApi1(dto: CreateExchangeDto) {
-    const rate = 0.91;
+    const rate = 0.9;
+    const { amount } = dto;
+
     try {
-      const result = dto.amount * rate;
+      const result = amount * rate;
 
       return {
         rate: result,
@@ -21,10 +23,10 @@ export class ExchangeService {
   }
 
   async getFromApi2(dto: CreateExchangeDto) {
-    const rate = 0.95;
+    const rate = 0.9;
 
     try {
-      const xmlResponse = `<Result>${(dto.amount * rate).toFixed(2)}</Result>`;
+      const xmlResponse = `<Result>${dto.exchange.amount * rate}</Result>`;
       const result = await parseStringPromise(xmlResponse);
       return {
         converted: parseFloat(result.Result),
@@ -41,7 +43,7 @@ export class ExchangeService {
   async getFromApi3(dto: CreateExchangeDto) {
     const rate = 0.9;
     try {
-      const total = dto.amount * rate;
+      const total = dto.exchange.amount * rate;
 
       return {
         statusCode: 200,
@@ -70,12 +72,14 @@ export class ExchangeService {
     }
 
     const dto: CreateExchangeDto = {
-      sourceCurrency: parsed.XML.From,
-      targetCurrency: parsed.XML.To,
-      amount: parseFloat(parsed.XML.Amount),
+      exchange: {
+        sourceCurrency: parsed.XML.From,
+        targetCurrency: parsed.XML.To,
+        amount: parseFloat(parsed.XML.Amount),
+      },
     };
 
-    if (isNaN(dto.amount)) {
+    if (isNaN(dto.exchange.amount)) {
       throw new Error('Amount must be a valid number');
     }
 

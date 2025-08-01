@@ -3,12 +3,14 @@ import { ExchangeService } from './exchange.service';
 import { CreateExchangeDto } from './dto/create-exchange.dto';
 import { Response } from 'express';
 
+
 @Controller('exchange')
 export class ExchangeController {
   constructor(private readonly exchangeService: ExchangeService) {}
 
   @Post('api1')
   async getRateFromApi1(@Body() dto: CreateExchangeDto) {
+    console.log('Received DTO:', dto);
     return this.exchangeService.getFromApi1(dto);
   }
 
@@ -25,7 +27,6 @@ export class ExchangeController {
     res.setHeader('Content-Type', 'application/xml');
     res.send(xmlResponse);
   }
-
 
   @Post('api3')
   async getRateFromApi3(@Body() dto: CreateExchangeDto) {
