@@ -1,34 +1,34 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Post, Body, Res, Headers } from '@nestjs/common';
 import { ExchangeService } from './exchange.service';
 import { CreateExchangeDto } from './dto/create-exchange.dto';
-import { UpdateExchangeDto } from './dto/update-exchange.dto';
+import { Response } from 'express';
 
 @Controller('exchange')
 export class ExchangeController {
   constructor(private readonly exchangeService: ExchangeService) {}
 
-  @Post()
-  create(@Body() createExchangeDto: CreateExchangeDto) {
-    return this.exchangeService.create(createExchangeDto);
+  @Post('api1')
+  async getRateFromApi1(@Body() dto: CreateExchangeDto) {
+    return this.exchangeService.getFromApi1(dto);
   }
 
-  @Get()
-  findAll() {
-    return this.exchangeService.findAll();
+  @Post('api2')
+  async getRateFromApi2(
+    @Body() body: string,
+    @Res() res: Response,
+    @Headers('content-type') contentType: string,
+  ) {
+    const xmlResponse = await this.exchangeService.handleXmlApi2(
+      body,
+      contentType,
+    );
+    res.setHeader('Content-Type', 'application/xml');
+    res.send(xmlResponse);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.exchangeService.findOne(+id);
-  }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateExchangeDto: UpdateExchangeDto) {
-    return this.exchangeService.update(+id, updateExchangeDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.exchangeService.remove(+id);
+  @Post('api3')
+  async getRateFromApi3(@Body() dto: CreateExchangeDto) {
+    return this.exchangeService.getFromApi3(dto);
   }
 }

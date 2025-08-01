@@ -1,26 +1,89 @@
 import { Injectable } from '@nestjs/common';
+
 import { CreateExchangeDto } from './dto/create-exchange.dto';
-import { UpdateExchangeDto } from './dto/update-exchange.dto';
+import { Builder, parseStringPromise } from 'xml2js';
 
 @Injectable()
 export class ExchangeService {
-  create(createExchangeDto: CreateExchangeDto) {
-    return 'This action adds a new exchange';
+  constructor() {}
+
+  async getFromApi1(dto: CreateExchangeDto) {
+    const rate = 0.91;
+    try {
+      const result = dto.amount * rate;
+
+      return {
+        rate: result,
+      };
+    } catch (error) {
+      throw new Error(`Error calculating rate: ${error.message}`);
+    }
   }
 
-  findAll() {
-    return `This action returns all exchange`;
+  async getFromApi2(dto: CreateExchangeDto) {
+    const rate = 0.95;
+
+    try {
+      const xmlResponse = `<Result>${(dto.amount * rate).toFixed(2)}</Result>`;
+      const result = await parseStringPromise(xmlResponse);
+      return {
+        converted: parseFloat(result.Result),
+      };
+    } catch (error) {
+      return {
+        statusCode: 500,
+        message: `Error calculating rate: ${error.message}`,
+        data: null,
+      };
+    }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} exchange`;
+  async getFromApi3(dto: CreateExchangeDto) {
+    const rate = 0.9;
+    try {
+      const total = dto.amount * rate;
+
+      return {
+        statusCode: 200,
+        message: 'Exchange rate',
+        data: total.toFixed(2),
+      };
+    } catch (error) {
+      return {
+        statusCode: 500,
+        message: `Error calculating rate: ${error.message}`,
+        data: null,
+      };
+    }
   }
 
-  update(id: number, updateExchangeDto: UpdateExchangeDto) {
-    return `This action updates a #${id} exchange`;
-  }
+  async handleXmlApi2(body: string, contentType: string): Promise<string> {
+    if (!contentType.includes('xml')) {
+      throw new Error('Expected XML content');
+    }
 
-  remove(id: number) {
-    return `This action removes a #${id} exchange`;
+    let parsed: any;
+    try {
+      parsed = await parseStringPromise(body, { explicitArray: false });
+    } catch (e) {
+      throw new Error('Invalid XML input');
+    }
+
+    const dto: CreateExchangeDto = {
+      sourceCurrency: parsed.XML.From,
+      targetCurrency: parsed.XML.To,
+      amount: parseFloat(parsed.XML.Amount),
+    };
+
+    if (isNaN(dto.amount)) {
+      throw new Error('Amount must be a valid number');
+    }
+
+    const result = await this.getFromApi2(dto);
+
+    const builder = new Builder({ headless: true, rootName: 'XML' });
+    return builder.buildObject({
+      Result: result.converted,
+    });
   }
 }
