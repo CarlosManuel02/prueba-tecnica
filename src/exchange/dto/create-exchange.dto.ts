@@ -1,4 +1,10 @@
-import { IsNotEmpty, IsNumber, IsOptional, IsString, ValidateIf } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsNumber,
+  IsPositive,
+  IsString,
+  ValidateIf,
+} from 'class-validator';
 
 export class CreateExchangeDto {
   // Formato plano
@@ -15,6 +21,7 @@ export class CreateExchangeDto {
   @ValidateIf((o) => !o.exchange)
   @IsNumber()
   @IsNotEmpty()
+  @IsPositive()
   amount?: number;
 
   // Formato anidado
