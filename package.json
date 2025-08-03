@@ -1,0 +1,14 @@
+{
+  "name": "prueba-tecnica",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/CarlosManuel02/prueba-tecnica.git",
+  "author": "Carlos Manuel Cedeño Barrera <carlosmcb02@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "start:all-local": "concurrently \"yarn --cwd api1-service start:dev\" \"yarn --cwd api2-service start:dev\" \"yarn --cwd api3-service start:dev\" \"yarn --cwd main-service start:dev\""
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.0"
+  }
+}

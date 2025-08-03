@@ -1,4 +1,7 @@
 # compiled output
+
+/node_modules
+
 /api1-service/dist
 /api1-service/node_modules
 /api1-service/.eslintrc.js

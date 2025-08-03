@@ -26,7 +26,7 @@ Jest para pruebas unitarias
 Docker (opcional)
 
 
-## Project setup
+## Ejecución:
 
 ### Ejecucion en docker:
 ### Requisitos
@@ -38,4 +38,11 @@ Docker (opcional)
 docker-compose up --build -d
 ```
 
-### E
+### Ejecucion local:
+### Requisitos
+- Node.js (v18 o superior)
+- yarn
+
+```bash
+yarn start:all-local
+```
