@@ -5,6 +5,10 @@ services:
     build: ./main-service
     ports:
       - '3000:3000'
+    environment:
+      API1_URL: http://api1-service:3001
+      API2_URL: http://api2-service:3002
+      API3_URL: http://api3-service:3003
     depends_on:
       - api1-service
       - api2-service
