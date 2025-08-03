@@ -1,0 +1,51 @@
+# compiled output
+/api1-service/dist
+/api1-service/node_modules
+/api1-service/.eslintrc.js
+/api1-service/.prettierrc
+
+/api2-service/dist
+/api2-service/node_modules
+/api2-service/.eslintrc.js
+/api2-service/.prettierrc
+
+/api3-service/dist
+/api3-service/node_modules
+/api3-service/.eslintrc.js
+/api3-service/.prettierrc
+/main-service/dist
+/main-service/node_modules
+/main-service/.eslintrc.js
+/main-service/.prettierrc
+
+# Logs
+logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# OS
+.DS_Store
+
+# Tests
+/coverage
+/.nyc_output
+
+# IDEs and editors
+/.idea
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+
+# IDE - VSCode
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json

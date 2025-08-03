@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  main-app:
+    build: ./main-service
+    ports:
+      - '3000:3000'
+    depends_on:
+      - api1-service
+      - api2-service
+      - api3-service
+
+  api1-service:
+    build: ./api1-service
+    ports:
+      - '3001:3001'
+
+  api2-service:
+    build: ./api2-service
+    ports:
+      - '3002:3002'
+
+  api3-service:
+    build: ./api3-service
+    ports:
+      - '3003:3003'
