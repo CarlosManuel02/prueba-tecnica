@@ -1,4 +1,3 @@
-// src/common/middleware/xml-body.middleware.ts
 import { Request, Response, NextFunction } from 'express';
 
 export function xmlBodyParser(req: Request, res: Response, next: NextFunction) {

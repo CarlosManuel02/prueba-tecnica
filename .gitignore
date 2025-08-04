@@ -4,22 +4,23 @@
 
 /api1-service/dist
 /api1-service/node_modules
-/api1-service/.eslintrc.js
-/api1-service/.prettierrc
+
+
 
 /api2-service/dist
 /api2-service/node_modules
-/api2-service/.eslintrc.js
-/api2-service/.prettierrc
+
 
 /api3-service/dist
 /api3-service/node_modules
-/api3-service/.eslintrc.js
-/api3-service/.prettierrc
+
+
+
+
 /main-service/dist
 /main-service/node_modules
-/main-service/.eslintrc.js
-/main-service/.prettierrc
+
+
 
 # Logs
 logs
