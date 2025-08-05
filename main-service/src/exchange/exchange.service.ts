@@ -23,24 +23,16 @@ export class ExchangeService {
       'http://localhost:3003',
     );
   }
-  /**
-   * Extracts exchange rates from multiple APIs.
-   * @param sourceCurrency The currency to convert from.
-   * @param targetCurrency The currency to convert to.
-   * @param amount The amount to convert.
-   * @returns An array of conversion results from the APIs.
-   */
-  async extracted(
-    sourceCurrency: string,
-    targetCurrency: string,
-    amount: number,
-  ): Promise<any[]> {
 
-    /**
-     *Input {from, to, value}
-     * Output {rate}
-     */
-    const api1 = axios
+  /**
+   * Fetches exchange rate from API1
+   * @param sourceCurrency
+   * @param targetCurrency
+   * @param amount
+   * @return Promise resolving to exchange rate data: { provider, convertedAmount }
+   */
+  fechApi1(sourceCurrency: string, targetCurrency: string, amount: number) {
+    return axios
       .post(`${this.API1_URL}/api1`, {
         // Use configurable URL
         sourceCurrency: sourceCurrency,
@@ -49,15 +41,19 @@ export class ExchangeService {
       })
       .then((res) => ({
         provider: 'API1',
-        conversionRate: res.data.rate,
         convertedAmount: amount * res.data.rate,
       }));
+  }
 
-    /**
-     * Input <XML><From/><To/><Amount/></XML>
-     * Output <XML><Result/></XML>
-     */
-    const api2 = axios
+  /**
+   * Fetches exchange rate from API2
+   * @param sourceCurrency
+   * @param targetCurrency
+   * @param amount
+   * @return Promise resolving to exchange rate data: <XML><Result>convertedAmount</Result></XML>
+   */
+  fechApi2(sourceCurrency: string, targetCurrency: string, amount: number) {
+    return axios
       .post(
         `${this.API2_URL}/api2`,
         `<XML><From>${sourceCurrency}</From><To>${targetCurrency}</To><Amount>${amount}</Amount></XML>`,
@@ -71,12 +67,17 @@ export class ExchangeService {
           data: res.data,
         };
       });
+  }
 
-    /**
-     * Input{exchange: {sourceCurrency,targetCurrency, quantity}}
-     * Output {statusCode, message, data: {total}}
-     */
-    const api3 = axios
+  /**
+   * Fetches exchange rate from API3
+   * @param sourceCurrency
+   * @param targetCurrency
+   * @param amount
+   * @return Promise resolving to exchange rate data: { provider, statusCode, message, data: { total } }
+   */
+  fechApi3(sourceCurrency: string, targetCurrency: string, amount: number) {
+    return axios
       .post(`${this.API3_URL}/api3`, {
         exchange: {
           sourceCurrency,
@@ -91,7 +92,42 @@ export class ExchangeService {
           provider: 'API3',
           ...res.data,
         };
+      })
+      .catch((error) => {
+        console.error('Error fetching from API3:', error);
+        throw new Error('Failed to fetch data from API3');
       });
+  }
+
+  /**
+   * Extracts exchange rates from multiple APIs.
+   * @param sourceCurrency The currency to convert from.
+   * @param targetCurrency The currency to convert to.
+   * @param amount The amount to convert.
+   * @returns An array of conversion results from the APIs.
+   */
+  async extracted(
+    sourceCurrency: string,
+    targetCurrency: string,
+    amount: number,
+  ): Promise<any[]> {
+    /**
+     *Input {from, to, value}
+     * Output {rate}
+     */
+    const api1 = this.fechApi1(sourceCurrency, targetCurrency, amount);
+
+    /**
+     * Input <XML><From/><To/><Amount/></XML>
+     * Output <XML><Result/></XML>
+     */
+    const api2 = this.fechApi2(sourceCurrency, targetCurrency, amount);
+
+    /**
+     * Input{exchange: {sourceCurrency, targetCurrency, quantity}}
+     * Output {statusCode, message, data: {total}}
+     */
+    const api3 = this.fechApi3(sourceCurrency, targetCurrency, amount);
 
     const results = await Promise.allSettled([api1, api2, api3]);
 
