@@ -41,7 +41,7 @@ export class ExchangeService {
       })
       .then((res) => ({
         provider: 'API1',
-        convertedAmount: amount * res.data.rate,
+        convertedAmount: res.data.rate,
       }));
   }
 
